@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:backgroundTint="@color/black"
+    app:strokeWidth="0dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/itemImgCover"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/place_holder" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="11dp"
+            android:layout_toStartOf="@+id/music_more_info"
+            android:layout_toEndOf="@id/itemImgCover"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/item_txt_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Bazam Nesahsti Roberoom - UpMusic"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/item_txt_artist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:maxLength="41"
+                android:maxLines="1"
+                android:text="Bazam Nesahsti Roberoom - UpMusic - 32:44"
+                android:textColor="#808080" />
+
+        </LinearLayout>
+
+
+        <ImageView
+            android:id="@+id/music_more_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/baseline_more_vert_24"
+            app:tint="#808080" />
+
+
+    </RelativeLayout>
+
+</com.google.android.material.card.MaterialCardView>

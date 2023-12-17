@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <RelativeLayout
+        android:padding="16dp"
+        android:background="@color/primary_variant"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/standard_bottom_sheet">
+
+        <TextView
+            android:id="@+id/txt_question"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Play audio files from your device?"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txt_permission"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Allow music player to access and play music files"
+            android:layout_below="@id/txt_question"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/secondary_text"
+            android:textSize="16sp"/>
+
+        <Button
+            style="@style/Widget.Material3.Button.TextButton"
+            android:id="@+id/btn_notNow_permission"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NOT NOW"
+            android:layout_toStartOf="@id/btn_allow_permission"
+            android:layout_alignTop="@id/btn_allow_permission"
+            android:layout_marginEnd="8dp"
+            android:textColor="@color/white"
+            />
+
+        <Button
+            android:id="@+id/btn_allow_permission"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:textColor="@color/black"
+            android:text="ALLOW"
+            android:layout_below="@id/txt_permission"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="16dp"/>
+
+    </RelativeLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
