@@ -268,7 +268,7 @@ class SongService : Service(), AudioManager.OnAudioFocusChangeListener,
     }
 
     fun getAllSongs(songList: List<MediaStoreSong>, clickedPosition: Int) {
-        if (!songList.isNullOrEmpty() && clickedPosition < songList.size && clickedPosition >= 0) {
+        if (!songList.isNullOrEmpty() && clickedPosition < songList.size && clickedPosition != -1) {
             this.position = clickedPosition
             originalSongList = ArrayList(songList)
             this.listOfAllSong = ArrayList(originalSongList)
@@ -519,19 +519,19 @@ class SongService : Service(), AudioManager.OnAudioFocusChangeListener,
             it.action = ACTION_PREVIOUS
         }
         val previousPendingIntent =
-            PendingIntent.getBroadcast(this, 0, previousIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.getBroadcast(this, 0, previousIntent, PendingIntent.FLAG_IMMUTABLE)
 
         val playPauseIntent = Intent(this, NotificationActionBroadcastReceiver::class.java).also {
             it.action = ACTION_PLAY_PAUSE
         }
         val playPausePendingIntent =
-            PendingIntent.getBroadcast(this, 0, playPauseIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.getBroadcast(this, 0, playPauseIntent, PendingIntent.FLAG_IMMUTABLE)
 
         val nextIntent = Intent(this, NotificationActionBroadcastReceiver::class.java).also {
             it.action = ACTION_NEXT
         }
         val nextPendingIntent =
-            PendingIntent.getBroadcast(this, 0, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.getBroadcast(this, 0, nextIntent, PendingIntent.FLAG_IMMUTABLE)
 
 
         val imgByte = getSongThumbnail(currentSong!!.path)

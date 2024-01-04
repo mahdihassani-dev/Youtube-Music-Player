@@ -14,6 +14,8 @@
             motion:targetId="@id/constraintLayout3" />
 
 
+
+
     </Transition>
 
     <ConstraintSet android:id="@+id/start">
@@ -78,7 +80,8 @@
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintHorizontal_bias="0.0"
-            motion:layout_constraintStart_toStartOf="parent" />
+            motion:layout_constraintStart_toStartOf="parent"
+            android:visibility="gone" />
 
         <Constraint
             android:id="@+id/constraintLayout3"

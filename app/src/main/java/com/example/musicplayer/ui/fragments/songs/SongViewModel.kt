@@ -9,6 +9,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.provider.MediaStore
+import androidx.annotation.RequiresApi
+import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -32,6 +34,7 @@ class SongViewModel(application: Application) : AndroidViewModel(application) {
     private val _permissionNeededForDelete = MutableLiveData<IntentSender?>()
     val permissionNeededForDelete: LiveData<IntentSender?> = _permissionNeededForDelete
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     fun loadSongs() {
         viewModelScope.launch {
             val songList = Repository(getApplication()).querySongs()

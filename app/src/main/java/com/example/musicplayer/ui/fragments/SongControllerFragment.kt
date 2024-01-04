@@ -1,28 +1,57 @@
 package com.example.musicplayer.ui.fragments
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.motion.widget.MotionLayout
-import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.musicplayer.R
 import com.example.musicplayer.databinding.FragmentSongControllerBinding
-import com.example.musicplayer.ui.MainActivity
+import com.example.musicplayer.interfaces.PlayPauseStateNotifier
+import com.example.musicplayer.interfaces.SeekCompletionNotifier
+import com.example.musicplayer.interfaces.SongChangeNotifier
+import com.example.musicplayer.model.MediaStoreSong
+import com.example.musicplayer.services.SongService
 import com.example.musicplayer.ui.fragments.songs.SongFragment
+import com.example.musicplayer.utils.Constants
+import com.example.musicplayer.utils.Constants.PREF_NAME
+import com.example.musicplayer.utils.MusicPlayerRemote
+import com.example.musicplayer.utils.PlayerHelper
 
 
-class SongControllerFragment : Fragment() {
+class SongControllerFragment : Fragment(), SongChangeNotifier, PlayPauseStateNotifier,
+    SeekCompletionNotifier {
 
     private lateinit var binding: FragmentSongControllerBinding
+
+    private lateinit var sharedPreferences: SharedPreferences
+
+    private val playerService: SongService?
+        get() = MusicPlayerRemote.songService
+    private val currentSong: MediaStoreSong?
+        get() = PlayerHelper.getCurrentSong(sharedPreferences)
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        sharedPreferences = requireActivity().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+
+        if (playerService != null) {
+            playerService!!.setSongChangeCallback(this)
+            playerService!!.setPlayPauseStateCallback(this)
+            playerService!!.setSeekCompleteNotifierCallback(this)
+        }
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,90 +78,89 @@ class SongControllerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.txtNameController.text =
-            requireArguments().getString(SongFragment.EXTRA_BUNDLE_NAME)
-        binding.txtArtistController.text =
-            requireArguments().getString(SongFragment.EXTRA_BUNDLE_ARTIST)
-        binding.itemTxtTitle.text =
-            requireArguments().getString(SongFragment.EXTRA_BUNDLE_NAME)
-        binding.itemTxtArtist.text =
-            requireArguments().getString(SongFragment.EXTRA_BUNDLE_ARTIST)
-        Glide.with(requireContext())
-            .load(requireArguments().getString(SongFragment.EXTRA_BUNDLE_COVER))
-            .placeholder(R.drawable.place_holder)
-            .into(binding.imgCoverController)
+
+        if (currentSong!!.id.toInt() == -1) {
+            binding.motionLayout.visibility = View.GONE
+        } else {
+            binding.motionLayout.visibility = View.VISIBLE
 
 
-        binding.motionLayout.addTransitionListener(object : MotionLayout.TransitionListener {
-            override fun onTransitionStarted(
-                motionLayout: MotionLayout?,
-                startId: Int,
-                endId: Int
-            ) {
-
-            }
-
-            override fun onTransitionChange(
-                motionLayout: MotionLayout?,
-                startId: Int,
-                endId: Int,
-                progress: Float
-            ) {
+            binding.txtNameController.text =
+                requireArguments().getString(SongFragment.EXTRA_BUNDLE_NAME)
+            binding.txtArtistController.text =
+                requireArguments().getString(SongFragment.EXTRA_BUNDLE_ARTIST)
+            binding.itemTxtTitle.text =
+                requireArguments().getString(SongFragment.EXTRA_BUNDLE_NAME)
+            binding.itemTxtArtist.text =
+                requireArguments().getString(SongFragment.EXTRA_BUNDLE_ARTIST)
+            Glide.with(requireContext())
+                .load(requireArguments().getString(SongFragment.EXTRA_BUNDLE_COVER))
+                .placeholder(R.drawable.place_holder)
+                .into(binding.imgCoverController)
 
 
-            }
+            binding.motionLayout.addTransitionListener(object : MotionLayout.TransitionListener {
+                override fun onTransitionStarted(
+                    motionLayout: MotionLayout?,
+                    startId: Int,
+                    endId: Int
+                ) {
 
-            override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
+                }
 
-                if (currentId == motionLayout?.startState) {
+                override fun onTransitionChange(
+                    motionLayout: MotionLayout?,
+                    startId: Int,
+                    endId: Int,
+                    progress: Float
+                ) {
 
-                    if (requireArguments().getBoolean(SongFragment.EXTRA_BUNDLE_HASCOVER)) {
+
+                }
+
+                override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
+
+                    if (currentId == motionLayout?.startState) {
+
 
                         binding.imgCoverController.setImageURI(
                             requireArguments().getString(
                                 SongFragment.EXTRA_BUNDLE_COVER
                             )?.toUri()
                         )
-                    } else {
-                        binding.imgCoverController.setImageResource(R.drawable.place_holder)
+
+
                     }
 
                 }
 
+                override fun onTransitionTrigger(
+                    motionLayout: MotionLayout?,
+                    triggerId: Int,
+                    positive: Boolean,
+                    progress: Float
+                ) {
+
+                }
+            })
+
+            binding.arrowDownPage.setOnClickListener {
+                binding.motionLayout.transitionToEnd()
             }
 
-            override fun onTransitionTrigger(
-                motionLayout: MotionLayout?,
-                triggerId: Int,
-                positive: Boolean,
-                progress: Float
-            ) {
 
-            }
-        })
-
-        binding.arrowDownPage.setOnClickListener {
-            binding.motionLayout.transitionToEnd()
         }
 
-        requireActivity()
-            .onBackPressedDispatcher
-            .addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-
-                    if (binding.motionLayout.currentState == binding.motionLayout.startState) {
-                        binding.motionLayout.transitionToEnd()
-                    } else {
-                        if (isEnabled) {
-                            isEnabled = false
-                            requireActivity().onBackPressed()
-                        }
-                    }
+    }
 
 
-                }
-            }
-            )
+    override fun onCurrentSongChange() {
+    }
+
+    override fun onPlayPauseStateChange() {
+    }
+
+    override fun onSeekComplete() {
 
     }
 
