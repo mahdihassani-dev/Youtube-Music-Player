@@ -62,7 +62,7 @@ class SongFragment : Fragment(), SongAdapter.OnItemClick {
 
 
         binding.backToHomeBtn.setOnClickListener {
-            findNavController().popBackStack()
+            backToHome()
         }
 
 
@@ -86,11 +86,6 @@ class SongFragment : Fragment(), SongAdapter.OnItemClick {
                                         songs as MutableList<MediaStoreSong>,
                                         -1
                                     )
-                                } else {
-                                    MusicPlayerRemote.sendAllSong(
-                                        emptyList<MediaStoreSong>() as MutableList<MediaStoreSong>,
-                                        -1
-                                    )
                                 }
                             })
 
@@ -107,7 +102,12 @@ class SongFragment : Fragment(), SongAdapter.OnItemClick {
             viewLifecycleOwner,
             Observer<List<MediaStoreSong>> { songs ->
                 if (songs.isNotEmpty()) {
+                    binding.recyclerSongs.visibility = View.VISIBLE
+                    binding.emptyScreen.visibility = View.INVISIBLE
                     showSongsByAdapter(songs)
+                } else {
+                    binding.recyclerSongs.visibility = View.INVISIBLE
+                    binding.emptyScreen.visibility = View.VISIBLE
                 }
             })
 
@@ -156,6 +156,10 @@ class SongFragment : Fragment(), SongAdapter.OnItemClick {
 
         transaction.replace(R.id.container, controllerFragment).commit()
 
+    }
+
+    fun backToHome() {
+        findNavController().popBackStack()
     }
 
 

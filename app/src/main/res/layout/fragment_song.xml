@@ -110,13 +110,15 @@
         tools:listitem="@layout/item_song"/>
 
     <LinearLayout
+        android:id="@+id/emptyScreen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="invisible">
 
         <ImageView
             android:id="@+id/icon_fragment_song"
@@ -124,7 +126,7 @@
             android:layout_height="56dp"
             android:layout_gravity="center"
             android:src="@drawable/baseline_music_note_24"
-            android:visibility="invisible" />
+            />
 
 
         <TextView
@@ -134,8 +136,7 @@
             android:layout_marginTop="12dp"
             android:text="Songs on your device will show up here"
             android:textColor="@color/secondary_text"
-            android:textSize="18sp"
-            android:visibility="invisible" />
+            android:textSize="18sp" />
 
     </LinearLayout>
 

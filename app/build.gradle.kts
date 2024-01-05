@@ -44,6 +44,9 @@ android {
 dependencies {
     val nav_version = "2.7.4"
 
+    // pallete
+    implementation("androidx.palette:palette-ktx:1.0.0")
+
     implementation("androidx.work:work-runtime-ktx:2.7.0")
     // Kotlin
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")

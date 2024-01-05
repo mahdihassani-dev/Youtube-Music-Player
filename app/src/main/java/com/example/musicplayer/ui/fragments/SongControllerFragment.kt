@@ -2,15 +2,21 @@ package com.example.musicplayer.ui.fragments
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.AlphaAnimation
+import android.view.animation.AnimationSet
+import android.view.animation.DecelerateInterpolator
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.net.toUri
+import androidx.core.view.drawToBitmap
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.musicplayer.R
@@ -21,7 +27,6 @@ import com.example.musicplayer.interfaces.SongChangeNotifier
 import com.example.musicplayer.model.MediaStoreSong
 import com.example.musicplayer.services.SongService
 import com.example.musicplayer.ui.fragments.songs.SongFragment
-import com.example.musicplayer.utils.Constants
 import com.example.musicplayer.utils.Constants.PREF_NAME
 import com.example.musicplayer.utils.MusicPlayerRemote
 import com.example.musicplayer.utils.PlayerHelper
@@ -34,14 +39,31 @@ class SongControllerFragment : Fragment(), SongChangeNotifier, PlayPauseStateNot
 
     private lateinit var sharedPreferences: SharedPreferences
 
+
     private val playerService: SongService?
         get() = MusicPlayerRemote.songService
     private val currentSong: MediaStoreSong?
         get() = PlayerHelper.getCurrentSong(sharedPreferences)
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (binding.motionLayout.currentState == 2131362317) {
+                        binding.motionLayout.transitionToEnd()
+                    } else {
+                        if (isEnabled) {
+                            isEnabled = false
+                            requireActivity().onBackPressed()
+                        }
+
+                    }
+                }
+            }
+        )
 
         sharedPreferences = requireActivity().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
 
@@ -52,6 +74,7 @@ class SongControllerFragment : Fragment(), SongChangeNotifier, PlayPauseStateNot
         }
 
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -77,7 +100,6 @@ class SongControllerFragment : Fragment(), SongChangeNotifier, PlayPauseStateNot
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         if (currentSong!!.id.toInt() == -1) {
             binding.motionLayout.visibility = View.GONE
@@ -115,6 +137,7 @@ class SongControllerFragment : Fragment(), SongChangeNotifier, PlayPauseStateNot
                     progress: Float
                 ) {
 
+                    binding.constraintLayout.setBackgroundColor(getDominantColor(binding.imgCoverController.drawToBitmap()))
 
                 }
 
@@ -162,6 +185,13 @@ class SongControllerFragment : Fragment(), SongChangeNotifier, PlayPauseStateNot
 
     override fun onSeekComplete() {
 
+    }
+
+    fun getDominantColor(bitmap: Bitmap?): Int {
+        val newBitmap = Bitmap.createScaledBitmap(bitmap!!, 1, 1, true)
+        val color = newBitmap.getPixel(0, 0)
+        newBitmap.recycle()
+        return color
     }
 
 
